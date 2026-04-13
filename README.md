@@ -20,7 +20,7 @@ Sistema de Computer Vision interactivo construido con **YOLOv26** y desplegado c
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/TU_USUARIO/detectar_huevos.git
+git clone https://github.com/monigogo/detector_huevos_yolo.git
 cd detectar_huevos
 ```
 

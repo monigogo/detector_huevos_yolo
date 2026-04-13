@@ -1,0 +1,31 @@
+# 1. Block everything initially
+*
+
+# 2. Re-include the build script and requirements
+!Dockerfile.demo
+!requirements.txt
+
+# 3. Handle 'src' folder
+# We allow the folder and the 'demo' subfolder, but nothing else
+!src/
+src/*
+!src/demo/
+
+# 4. Handle 'models' folder
+# We allow the folder structure, but ignore all weights except best.pt
+!models/
+models/*
+!models/models_org/
+!models/models_org_2/
+
+# Deep dive into models_org
+models/models_org/*
+!models/models_org/weights/
+models/models_org/weights/*
+!models/models_org/weights/best.pt
+
+# Deep dive into models_org_2
+models/models_org_2/*
+!models/models_org_2/weights/
+models/models_org_2/weights/*
+!models/models_org_2/weights/best.pt

@@ -1,0 +1,49 @@
+services:
+  # FastAPI Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
+      target: backend
+    container_name: brand_analyzer_backend
+    env_file:
+      - .env
+    environment:
+      # Backend runs on port 8000
+      BACKEND_URL: http://backend:8000
+    volumes:
+      - ./src/data:/app/src/data
+      - ./src/data:/shared/data
+    ports:
+      - "8000:8000"
+    networks:
+      - brand_analyzer_network
+    restart: unless-stopped
+
+  # Streamlit Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
+      target: frontend
+    container_name: brand_analyzer_frontend
+    env_file:
+      - .env
+    environment:
+      # Frontend communicates with backend via container network
+      BACKEND_URL: http://backend:8000
+    volumes:
+      - ./src/data:/app/src/data
+      - ./src/data:/shared/data
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - brand_analyzer_network
+    restart: unless-stopped
+
+# Network for inter-service communication
+networks:
+  brand_analyzer_network:
+    driver: bridge

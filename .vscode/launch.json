@@ -1,0 +1,45 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {"name":"Python Debugger: FastAPI","type":"debugpy","request":"launch","module":"uvicorn","args":["main:app","--reload"],"jinja":true},
+        
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
+            "preLaunchTask": "npm",
+            "request": "launch",
+            "type": "extensionHost"
+        },  
+        {
+            "name": "Python: Streamlit (Frontend)",
+            "type": "python",
+            "request": "launch",
+            "module": "streamlit",
+            "args": [
+                "run",
+                "${workspaceFolder}/fronted/app.py",
+                "--server.port",
+                "8501"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "Local URL: (http://localhost:[0-9]+)",
+                "uriFormat": "%s"
+            }
+        },
+        {
+            "name": "Python: Huevos Detector",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/notebooks/huevos_detector.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}

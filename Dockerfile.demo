@@ -1,0 +1,67 @@
+# Multi-stage Docker build for Brand Exposure Analyzer
+# This Dockerfile builds both backend (FastAPI) and frontend (Streamlit) services
+# Use build argument to specify which service to build: backend or frontend
+
+FROM python:3.12-slim  AS base
+
+# Install system dependencies required by OpenCV, PostgreSQL, and YOLO
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    libgl1 \
+    libglib2.0-0 \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the requirements file
+COPY requirements.txt .
+
+# Install Python dependencies with no cache to reduce image size
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application source code and models
+COPY src/ ./src/
+COPY models/ ./models/
+
+# ============================================================================
+# Backend Service Stage
+# ============================================================================
+FROM base  AS backend
+
+# Expose FastAPI port (backend service)
+EXPOSE 8000
+
+# Run FastAPI backend with automatic reload disabled in production
+# Use host 0.0.0.0 to make accessible from outside container
+CMD ["uvicorn", "src.demo.backend.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ============================================================================
+# Frontend Service Stage  
+# ============================================================================
+FROM base  AS frontend
+
+# Expose Streamlit port (frontend service)
+EXPOSE 8501
+
+# Configure Streamlit server settings for containerization
+# server.address=0.0.0.0 allows external access
+# logger.level=info reduces log verbosity
+RUN mkdir -p /app/.streamlit && \
+    echo "[server]" > /app/.streamlit/config.toml && \
+    echo "address = \"0.0.0.0\"" >> /app/.streamlit/config.toml && \
+    echo "headless = true" >> /app/.streamlit/config.toml && \
+    echo "port = 8501" >> /app/.streamlit/config.toml
+
+# Run Streamlit frontend application
+# Binding to 0.0.0.0 makes it accessible from outside container
+CMD ["streamlit", "run", "src/demo/frontend/app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+# ============================================================================
+# Default Stage (backend - can be overridden via docker build --target)
+# ============================================================================
+FROM backend

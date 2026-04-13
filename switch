@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Script to switch between different devcontainer configurations
+
+set -e
+
+# Directory where devcontainer files are stored
+DEVCONTAINER_DIR=".devcontainer"
+
+# Function to list available devcontainers
+list_available() {
+    echo "Available devcontainers:"
+    # Find all files starting with devcontainer. and not ending in .json
+    for file in "$DEVCONTAINER_DIR"/devcontainer.*; do
+        if [[ -f "$file" ]]; then
+            suffix="${file#$DEVCONTAINER_DIR/devcontainer.}"
+            if [[ "$suffix" != "json" ]]; then
+                echo "  - $suffix"
+            fi
+        fi
+    done
+}
+
+# Check if .devcontainer directory exists
+if [ ! -d "$DEVCONTAINER_DIR" ]; then
+    echo "Error: $DEVCONTAINER_DIR directory not found."
+    exit 1
+fi
+
+# Check if an argument was provided
+if [ -z "$1" ]; then
+    echo "Usage: ./switch <type>"
+    list_available
+    exit 1
+fi
+
+TYPE=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+TARGET_FILE="$DEVCONTAINER_DIR/devcontainer.$TYPE"
+DEST_FILE="$DEVCONTAINER_DIR/devcontainer.json"
+
+if [ -f "$TARGET_FILE" ]; then
+    cp "$TARGET_FILE" "$DEST_FILE"
+    echo "Successfully switched to '$TYPE' devcontainer."
+    echo "Note: You may need to rebuild your container in VS Code for changes to take effect."
+else
+    echo "Error: Devcontainer type '$TYPE' not found at '$TARGET_FILE'."
+    list_available
+    exit 1
+fi

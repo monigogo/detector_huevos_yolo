@@ -1,0 +1,10 @@
+[project]
+name = "detectar-huevos"
+version = "0.1.0"
+dependencies = [
+    "ultralytics",
+    "fastapi",
+    "uvicorn",
+    "streamlit",
+    "yt-dlp"
+]

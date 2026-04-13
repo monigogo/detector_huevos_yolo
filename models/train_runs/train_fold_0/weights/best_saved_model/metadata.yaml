@@ -1,0 +1,22 @@
+description: Ultralytics best model trained on /workspaces/Moni Gomez/Desktop/Archivos/Proyectos_Personales/detectar_huevos/data/5_Fold_CV_Dataset_Physical/fold_0/data.yaml
+author: Ultralytics
+date: '2026-04-02T15:22:45.686964'
+version: 8.4.33
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: huevo
+args:
+  batch: 1
+  fraction: 1.0
+  half: false
+  int8: false
+  nms: false
+channels: 3
+end2end: false
